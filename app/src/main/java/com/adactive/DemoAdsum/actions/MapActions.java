@@ -19,6 +19,7 @@ public class MapActions implements Compass.CompassListener {
 
 
     public MapActions setInitialState() {
+        compass = new Compass(map.getContext());
         // Configure the map
         map.customizeInactivePlaces(InactivePlaceColor);
         map.limitCameraMovement(false);
@@ -37,7 +38,6 @@ public class MapActions implements Compass.CompassListener {
     }
 
     public void startCompass() {
-        compass = new Compass(map.getContext());
         map.enableCompassMode();
         compass.addEventListener(this);
     }
