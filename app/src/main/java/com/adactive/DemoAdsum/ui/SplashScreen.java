@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import com.adactive.DemoAdsum.R;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 
 public class SplashScreen extends AppCompatActivity {
@@ -15,6 +17,7 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         //TODO cleaner splash implementation without layout loading
 
 
