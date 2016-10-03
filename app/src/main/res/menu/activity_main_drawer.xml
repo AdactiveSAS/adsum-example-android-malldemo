@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/drawer_synchroAdsum"
+            android:title="@string/synchronizeAdSum" />
+        <item
+            android:id="@+id/drawer_resetPath"
+            android:title="@string/resetPath" />
+        <item
+            android:id="@+id/drawer_about"
+
+            android:title="@string/about" />
+    </group>
+
+</menu>

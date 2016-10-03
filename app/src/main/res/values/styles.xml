@@ -1,0 +1,21 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="android:colorPrimary">@color/adsumGreen</item>
+        <item name="android:colorPrimaryDark">@color/adsumGreen</item>
+        <item name="android:statusBarColor">@color/adsumGreen</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="NavigationDrawerStyle">
+        <item name="android:textSize">15sp</item><!-- text size in menu-->
+        <item name="android:layout_marginBottom">05dp</item>
+        <item name="android:listPreferredItemHeightSmall">40sp</item><!-- item size in menu-->
+    </style>
+
+</resources>
+
