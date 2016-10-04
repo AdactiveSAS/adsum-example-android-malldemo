@@ -1,7 +1,6 @@
 package com.adactive.DemoAdsum.ui;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import com.adactive.DemoAdsum.R;
 import com.adactive.DemoAdsum.actions.MapActions;
 import com.adactive.DemoAdsum.actions.PathActions;
 import com.adactive.DemoAdsum.structure.PoiCollection;
-import com.adactive.DemoAdsum.utils.PermissionsUtils;
 import com.adactive.nativeapi.AdActiveEventListener;
 import com.adactive.nativeapi.CheckForUpdatesNotice;
 import com.adactive.nativeapi.CheckStartNotice;
@@ -39,8 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class MapFragment extends MainActivity.PlaceholderFragment implements View.OnTouchListener, StoreDescriptionDialog.DialogListener
-        {
+public class MapFragment extends MainActivity.PlaceholderFragment implements View.OnTouchListener, StoreDescriptionDialog.DialogListener {
 
     static private boolean isMapLoaded = false;
     static private MapView.CameraMode currentCameraMode = MapView.CameraMode.FULL;
@@ -302,8 +299,6 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //if (checkPermissions()) {
-                //}
                 if (isInBuilding) {
                     setSiteView.setIcon(R.drawable.ic_chevron_left_black_48dp);
                     setLevel.setVisibility(View.VISIBLE);
@@ -606,71 +601,18 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         }
     }
 
-
-    // Permissions Check
-/*
-    private static final int PERMISSION_REQUEST_CODE = 0;
-
-    private static final String[] NEEDED_PERMISSIONS = new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.INTERNET,
-            Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.BLUETOOTH
-    };
-
-    protected boolean checkPermissions() {
-        return PermissionsUtils.checkAndRequest(this.getActivity(), NEEDED_PERMISSIONS, getResources().getString(R.string.permission_msg), PERMISSION_REQUEST_CODE,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onPermissionsRefused();
-                    }
-                });
+    @Override
+    public void onPause() {
+        if (map != null)
+            map.onPause();
+        super.onPause();
     }
 
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            boolean allRequestsAccepted = false;
-            if (grantResults.length == permissions.length) {
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        allRequestsAccepted = false;
-                        break;
-                    } else {
-                        allRequestsAccepted = true;
-                    }
-                }
-                if (allRequestsAccepted) {
-
-                } else {
-                    onPermissionsRefused();
-                }
-            }
-        }
-    }*/
-
-
-    public void onPermissionsRefused() {
-        notifyUser("Cannot run the service because permissions have been denied");
+    @Override
+    public void onResume() {
+        if (map != null)
+            map.onResume();
+        super.onResume();
     }
 
-
-            @Override
-            public void onPause() {
-                if (map != null)
-                    map.onPause();
-                super.onPause();
-            }
-
-
-            @Override
-            public void onResume() {
-                if (map != null)
-                    map.onResume();
-                super.onResume();
-            }
-
-
-        }
+}
