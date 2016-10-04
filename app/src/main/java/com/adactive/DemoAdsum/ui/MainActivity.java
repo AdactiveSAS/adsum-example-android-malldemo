@@ -146,32 +146,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
-
-
-    // when the fragment call requestPermissions, the onRequestPermissionsResuls is called on the activity
-    /*public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        Log.e("dbg", "permission results");
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        MapFragment fragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.container);
-
-        if (requestCode == MapFragment.PERMISSION_REQUEST_CODE) {
-            boolean allRequestsAccepted = false;
-            if (grantResults.length == permissions.length) {
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        allRequestsAccepted = false;
-                        break;
-                    } else {
-                        allRequestsAccepted = true;
-                    }
-                }
-                if (allRequestsAccepted) {
-                    Log.e("dbg", "permission accpeted");
-                } else {
-                    Log.e("dbg", "permission refused");
-                    fragment.onPermissionsRefused();
-                }
-            }
-        }
-    }*/
 }
