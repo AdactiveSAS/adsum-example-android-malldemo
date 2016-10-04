@@ -1,9 +1,8 @@
 package com.adactive.DemoAdsum.ui;
 
-import android.Manifest;
+
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -112,7 +111,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
                     doBuildingClicked(nBuidlingid);
                 }
                 if (!floorButtonsMap.isEmpty()) {
-                    doFloorChanged(floorId);
+                    doFloorButtonsChanged(floorId);
                 }
             }
 
@@ -134,6 +133,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
                 if (stateId == CheckStartNotice.ADACTIVEVIEW_DID_START) {
                     mapActions = new MapActions(map);
                     pathActions = new PathActions(map);
+                    mPoiCollection = new PoiCollection(map.getDataManager().getAllPois());
                     doMapLoaded();
                 }
             }
@@ -280,13 +280,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
     private void doMapLoaded() {
 
-        mPoiCollection = new PoiCollection(map.getDataManager().getAllPois());
-
         final boolean isInBuilding = map.getCurrentBuilding() != -1;
-
-        pathActions.resetPathDrawing();
-
-        map.getPathObject().setPathMotion(false);
 
         setSiteView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -308,8 +302,8 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (checkPermissions()) {
-                }
+                //if (checkPermissions()) {
+                //}
                 if (isInBuilding) {
                     setSiteView.setIcon(R.drawable.ic_chevron_left_black_48dp);
                     setLevel.setVisibility(View.VISIBLE);
@@ -328,6 +322,8 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         setCurrentFloorOnUser();
 
         mapActions.setInitialState();
+        pathActions.resetPathDrawing()
+                .setMotionFalse();
         isMapLoaded = true;
 
     }
@@ -347,11 +343,9 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         //Highlight POI
         mapActions.POIClicked(place);
 
-
         //Launch Dialog
         Bundle args = new Bundle();
         String name = map.getDataManager().getPoi(POI).getName();
-
         args.putString(StoreDescriptionDialog.ARG_STORE_NAME, name);
         args.putInt("PoiID", POI);
         //args.putString(StoreDescriptionDialog.ARG_STORE_DESCRIPTION, description);
@@ -422,7 +416,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         floorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doFloorChanged(floorId);
+                doFloorButtonsChanged(floorId);
                 Log.i("floorID", String.valueOf(floorId));
                 map.setCurrentFloor(floorId);
             }
@@ -431,7 +425,13 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         return floorButton;
     }
 
-    private void doFloorChanged(final int floorId) {
+    private void setCurrentFloorOnUser() {
+        int floorID = map.getPlaceFloor(0);
+        mapActions.setCurrentFloorOnUser(floorID);
+        doFloorButtonsChanged(floorID);
+    }
+
+    public void doFloorButtonsChanged(final int floorId) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -545,7 +545,6 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         // Touching the Map will deactivate CenterOnMe if it was active
@@ -596,13 +595,6 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         pathActions.drawPathToPoi(id);
     }
 
-    private void setCurrentFloorOnUser() {
-        int floorID = map.getPlaceFloor(0);
-        if (map.getCurrentFloor() != floorID) {
-            map.setCurrentFloor(floorID);
-            doFloorChanged(floorID);
-        }
-    }
 
     private void enableFreeMode() {
         if (currentNavigationMode != NAVIGATION_MODE.FREE) {
@@ -616,7 +608,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
 
     // Permissions Check
-
+/*
     private static final int PERMISSION_REQUEST_CODE = 0;
 
     private static final String[] NEEDED_PERMISSIONS = new String[]{
@@ -657,11 +649,28 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
                 }
             }
         }
-    }
+    }*/
 
 
-    private void onPermissionsRefused() {
+    public void onPermissionsRefused() {
         notifyUser("Cannot run the service because permissions have been denied");
     }
 
-}
+
+            @Override
+            public void onPause() {
+                if (map != null)
+                    map.onPause();
+                super.onPause();
+            }
+
+
+            @Override
+            public void onResume() {
+                if (map != null)
+                    map.onResume();
+                super.onResume();
+            }
+
+
+        }

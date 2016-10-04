@@ -18,9 +18,6 @@ public class SplashScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-        //TODO cleaner splash implementation without layout loading
-
-
         setContentView(R.layout.splashscreen);
         new Handler().postDelayed(new Runnable() {
             @Override

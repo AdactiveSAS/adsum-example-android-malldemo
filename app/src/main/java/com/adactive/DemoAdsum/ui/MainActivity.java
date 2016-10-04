@@ -1,20 +1,15 @@
 package com.adactive.DemoAdsum.ui;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -22,14 +17,9 @@ import android.widget.Toast;
 import com.adactive.DemoAdsum.R;
 import com.adactive.DemoAdsum.actions.MapActions;
 import com.adactive.DemoAdsum.actions.PathActions;
-import com.adactive.DemoAdsum.utils.Compass;
 import com.adactive.nativeapi.MapView;
-import com.adactive.nativeapi.utils.IoUtils;
 import com.quinny898.library.persistentsearch.SearchBox;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MapView map;
     private Toolbar toolbar;
     private PathActions pathActions;
+    private MapActions mapActions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +45,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         map = new MapView(getApplicationContext());
 
-        if (!map.isMapDataAvailable()) {
-            //loadDataFromAsset(getApplicationContext());
-            map.update(true);
-            map.start();
-
-        } else {
-            map.start();
-            map.update(true);
-        }
-
+        mapActions = new MapActions(map);
+        mapActions.startMap();
 
         //Drawer implementation
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -76,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
 
         //Start containing Fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -129,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.drawer_resetPath) {
             Toast.makeText(this, "Path Reset", Toast.LENGTH_LONG).show();
-            pathActions= new PathActions(map);
+            pathActions = new PathActions(map);
             pathActions.resetPathDrawing();
 
 
@@ -164,21 +148,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    @Override
-    public void onPause() {
-        if (map != null)
-            map.onPause();
+    // when the fragment call requestPermissions, the onRequestPermissionsResuls is called on the activity
+    /*public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Log.e("dbg", "permission results");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        MapFragment fragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.container);
 
-
-        super.onPause();
-    }
-
-
-    @Override
-    public void onResume() {
-        if (map != null)
-            map.onResume();
-        super.onResume();
-    }
-
+        if (requestCode == MapFragment.PERMISSION_REQUEST_CODE) {
+            boolean allRequestsAccepted = false;
+            if (grantResults.length == permissions.length) {
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                        allRequestsAccepted = false;
+                        break;
+                    } else {
+                        allRequestsAccepted = true;
+                    }
+                }
+                if (allRequestsAccepted) {
+                    Log.e("dbg", "permission accpeted");
+                } else {
+                    Log.e("dbg", "permission refused");
+                    fragment.onPermissionsRefused();
+                }
+            }
+        }
+    }*/
 }
