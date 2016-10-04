@@ -13,12 +13,19 @@ public class PathActions {
         this.map=aMap;
     }
 
-    public void drawPathToPoi(int poiID){
+    public PathActions drawPathToPoi(int poiID){
         map.drawPathToPoi(poiID);
+        return this;
 
     }
 
-    public void resetPathDrawing() {
+    public PathActions resetPathDrawing() {
         map.resetPath();
+        return this;
+    }
+
+    public PathActions setMotionFalse(){
+        map.getPathObject().setPathMotion(false);
+        return this;
     }
 }

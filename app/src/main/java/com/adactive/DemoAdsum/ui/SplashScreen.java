@@ -15,9 +15,6 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO cleaner splash implementation without layout loading
-
-
         setContentView(R.layout.splashscreen);
         new Handler().postDelayed(new Runnable() {
             @Override

@@ -10,13 +10,24 @@ import com.adactive.nativeapi.MapView;
 public class MapActions implements Compass.CompassListener {
     private Compass compass;
     private MapView map;
-    private String InactivePlaceColor="#F9F6F8";
+    private String InactivePlaceColor = "#F9F6F8";
     static private MapView.CameraMode currentCameraMode = MapView.CameraMode.FULL;
 
     public MapActions(MapView aMap) {
         this.map = aMap;
     }
 
+    public MapActions startMap() {
+
+        if (!map.isMapDataAvailable()) {
+            map.update(true);
+
+        } else {
+            map.start();
+            map.update(true);
+        }
+        return this;
+    }
 
     public MapActions setInitialState() {
         compass = new Compass(map.getContext());
@@ -28,6 +39,12 @@ public class MapActions implements Compass.CompassListener {
         map.centerOnPlace(0, 300, 0.2f);
 
         return this;
+    }
+
+    public void setCurrentFloorOnUser(Integer floorID) {
+        if (map.getCurrentFloor() != floorID) {
+            map.setCurrentFloor(floorID);
+        }
     }
 
     public MapActions POIClicked(Integer placeId) {
@@ -48,9 +65,8 @@ public class MapActions implements Compass.CompassListener {
         compass.removeEventListener(this);
     }
 
-
     @Override
     public void onNorthChanged(float angle) {
-    map.rotateAbsolute(-angle);
+        map.rotateAbsolute(-angle);
     }
 }
