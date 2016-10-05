@@ -55,18 +55,24 @@ public class MapActions implements Compass.CompassListener {
     }
 
     public void startCompass() {
+        compass.startCompass();
         map.enableCompassMode();
-        compass.addEventListener(this);
+        compass.registerListener(this);
     }
 
     public void stopCompass() {
         map.disableCompassMode();
         compass.pauseCompass();
-        compass.removeEventListener(this);
+        compass.unregisterListener(this);
     }
 
     @Override
     public void onNorthChanged(float angle) {
         map.rotateAbsolute(-angle);
     }
+
+    public void setCurrentFloor(int floorId){
+        map.setCurrentFloor(floorId);
+    }
 }
+

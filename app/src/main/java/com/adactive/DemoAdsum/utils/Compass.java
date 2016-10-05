@@ -26,17 +26,19 @@ public class Compass implements SensorEventListener {
         sensorManager = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
         mSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
+
+    }
+
+    public void registerListener(CompassListener listener) {
+        compassListeners.add(listener);
         if (mSensor != null) {
             sensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
         }
     }
 
-    public void addEventListener(CompassListener listener) {
-        compassListeners.add(listener);
-    }
-
-    public void removeEventListener(CompassListener listener) {
+    public void unregisterListener(CompassListener listener) {
         compassListeners.remove(listener);
+        sensorManager.unregisterListener(this);
     }
 
 
@@ -45,16 +47,16 @@ public class Compass implements SensorEventListener {
         float[] orientation = new float[3];
         float R[] = new float[9];
 
-        if( sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR ){
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             // calculate th rotation matrix
-            SensorManager.getRotationMatrixFromVector( R, sensorEvent.values );
+            SensorManager.getRotationMatrixFromVector(R, sensorEvent.values);
             // get the azimuth value (orientation[0]) in degree
-            float north = (float) (( Math.toDegrees( SensorManager.getOrientation( R, orientation )[0] ) + 360 ) % 360);
+            float north = (float) ((Math.toDegrees(SensorManager.getOrientation(R, orientation)[0]) + 360) % 360);
             for (int i = 0; i < compassListeners.size(); i++) {
                 compassListeners.get(i).onNorthChanged(north);
             }
-
         }
+
     }
 
     @Override
@@ -66,5 +68,9 @@ public class Compass implements SensorEventListener {
 
     }
 
-
+    public void startCompass() {
+        if (mSensor != null) {
+            sensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
+        }
+    }
 }
