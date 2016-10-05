@@ -1,8 +1,6 @@
 package com.adactive.DemoAdsum.ui;
 
-
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
@@ -16,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.adactive.DemoAdsum.FloatingActionButtons.FloatingActionButtonsManager;
 import com.adactive.DemoAdsum.R;
 import com.adactive.DemoAdsum.actions.MapActions;
 import com.adactive.DemoAdsum.actions.PathActions;
@@ -25,23 +24,18 @@ import com.adactive.nativeapi.CheckForUpdatesNotice;
 import com.adactive.nativeapi.CheckStartNotice;
 import com.adactive.nativeapi.Coordinates3D;
 import com.adactive.nativeapi.MapView;
-import com.amulyakhare.textdrawable.TextDrawable;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
-public class MapFragment extends MainActivity.PlaceholderFragment implements View.OnTouchListener, StoreDescriptionDialog.DialogListener {
+public class MapFragment extends MainActivity.PlaceholderFragment implements View.OnTouchListener, StoreDescriptionDialog.DialogListener, FloatingActionButtonsManager.FABListener {
 
     static private boolean isMapLoaded = false;
     static private MapView.CameraMode currentCameraMode = MapView.CameraMode.FULL;
-
 
     public enum NAVIGATION_MODE {
         FREE,
@@ -56,14 +50,8 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     private View rootView;
     private MapView map;
     private LinearLayout mapContainer;
+    private FloatingActionButton fabDeletePath;
 
-    private FloatingActionsMenu setLevel;
-    private FloatingActionButton setSiteView;
-    private FloatingActionButton deletePath;
-    private FloatingActionButton setLocalisationBehaviour;
-
-    private FloatingActionButton preSelectedFloorButton;
-    private Map<Integer, FloatingActionButton> floorButtonsMap = new HashMap<>();
 
     private SearchBox search;
     private boolean isMenuEnabled = true;
@@ -76,6 +64,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
     private MapActions mapActions;
     private PathActions pathActions;
+    private FloatingActionButtonsManager floatingActionButtonsManager;
 
     public static MapFragment newInstance(MapView map) {
         MapFragment fragment = new MapFragment();
@@ -93,7 +82,6 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             @Override
             public void OnPOIClickedHandler(int[] POIs, int place) {
                 doPOIClicked(POIs[0], place);
-
             }
 
             @Override
@@ -107,7 +95,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
                 if (nBuidlingid != currentBuildingId) {
                     doBuildingClicked(nBuidlingid);
                 }
-                if (!floorButtonsMap.isEmpty()) {
+                if (!floatingActionButtonsManager.isFloorButtonMapEmpty()) {
                     doFloorButtonsChanged(floorId);
                 }
             }
@@ -131,7 +119,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
                     mapActions = new MapActions(map);
                     pathActions = new PathActions(map);
                     mPoiCollection = new PoiCollection(map.getDataManager().getAllPois());
-                    doMapLoaded();
+                    doAfterMapLoaded();
                 }
             }
 
@@ -175,21 +163,12 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_map, container, false);
-
+        fabDeletePath = (FloatingActionButton) rootView.findViewById(R.id.delete_path);
         currentCameraMode = MapView.CameraMode.FULL;
-
         mapContainer = (LinearLayout) rootView.findViewById(R.id.map_container);
-        setSiteView = (FloatingActionButton) rootView.findViewById(R.id.set_site_view);
-        setLevel = (FloatingActionsMenu) rootView.findViewById(R.id.set_level);
-        deletePath = (FloatingActionButton) rootView.findViewById(R.id.delete_path);
-        setLocalisationBehaviour = (FloatingActionButton) rootView.findViewById(R.id.set_follow_location);
 
-        setLocalisationBehaviour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                localisationButtonBehaviour();
-            }
-        });
+        floatingActionButtonsManager = new FloatingActionButtonsManager(rootView);
+
 
         if (!map.isMapDataAvailable()) {
             rootView.findViewById(R.id.map).setVisibility(View.GONE);
@@ -200,7 +179,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         mapContainer.addView(map);
 
         if (isMapLoaded) {
-            doMapLoaded();
+            doAfterMapLoaded();
         }
 
         search = ((MainActivity) getActivity()).getSearchBox();
@@ -275,39 +254,16 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void doMapLoaded() {
+    private void doAfterMapLoaded() {
 
         final boolean isInBuilding = map.getCurrentBuilding() != -1;
 
-        setSiteView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doSetSiteView();
-            }
-        });
-
-        deletePath.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pathActions.resetPathDrawing();
-                map.unLightAll();
-                deletePath.setVisibility(View.GONE);
-            }
-        });
-
+        floatingActionButtonsManager.addEventListener(this);
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (isInBuilding) {
-                    setSiteView.setIcon(R.drawable.ic_chevron_left_black_48dp);
-                    setLevel.setVisibility(View.VISIBLE);
-                } else {
-                    setSiteView.setIcon(R.drawable.ic_home_black_48dp);
-                    setLevel.setVisibility(View.GONE);
-                }
-
-                setSiteView.setVisibility(View.VISIBLE);
+                floatingActionButtonsManager.doFABBehaviourWhetherInBuilding(isInBuilding);
             }
         });
 
@@ -324,12 +280,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     }
 
     private void doSetSiteView() {
-        // Collapse the setLevel menu
-        setLevel.collapse();
-        // Change the icon of the setSiteView button (into home)
-        setSiteView.setIcon(R.drawable.ic_home_black_48dp);
-        // Make the setLevel button invisible
-        setLevel.setVisibility(View.GONE);
+        floatingActionButtonsManager.doSetSiteViewFAB();
         map.setSiteView();
     }
 
@@ -360,64 +311,11 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             @Override
             public void run() {
                 map.unLightAll();
-
-                // Remove all the former floorButtons of the menu */
-                for (Integer floorId : floorButtonsMap.keySet()) {
-                    setLevel.removeButton(floorButtonsMap.get(floorId));
-                }
-                floorButtonsMap.clear();
-
-                // Add all the new floorButtons on the menu
-                FloatingActionButton floorButton = null;
-                for (int i = 0; i < floors.length; ++i) {
-                    floorButton = createFloorButton(i, floors[i]);
-                    //floorButtons.add(floorButton);
-                    floorButtonsMap.put(floors[i], floorButton);
-                    setLevel.addButton(floorButton);
-                }
-
-                // Disable the current floor button
-                if (floorButton != null) {
-                    preSelectedFloorButton = floorButton;
-                    floorButton.setEnabled(false);
-                }
-
-                // Change the icon of the setSiteView button (into arrow)
-                setSiteView.setIcon(R.drawable.ic_chevron_left_black_48dp);
-
-                // Make the setLevel button visible
-                setLevel.setVisibility(View.VISIBLE);
+                floatingActionButtonsManager.doBuildingClickedFAB(floors,getActivity().getBaseContext(),map);
             }
         });
 
         map.setCurrentBuilding(i);
-    }
-
-    private FloatingActionButton createFloorButton(int level, final int floorId) {
-        FloatingActionButton floorButton = new FloatingActionButton(getActivity().getBaseContext());
-        floorButton.setSize(FloatingActionButton.SIZE_MINI);
-        floorButton.setColorNormalResId(R.color.white);
-        floorButton.setColorPressedResId(R.color.white_pressed);
-
-        TextDrawable floor_icon = TextDrawable.builder()
-                .beginConfig()
-                .fontSize(30)
-                .textColor(Color.BLACK)
-                .endConfig()
-                .buildRound(Integer.toString(level), Color.TRANSPARENT);
-
-        floorButton.setIconDrawable(floor_icon);
-
-        floorButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doFloorButtonsChanged(floorId);
-                Log.i("floorID", String.valueOf(floorId));
-                map.setCurrentFloor(floorId);
-            }
-        });
-
-        return floorButton;
     }
 
     private void setCurrentFloorOnUser() {
@@ -430,15 +328,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (preSelectedFloorButton != null && floorId > -1) {
-                    preSelectedFloorButton.setEnabled(true);
-                }
-
-                // Disable the current floor button
-                preSelectedFloorButton = floorButtonsMap.get(floorId);
-                if (preSelectedFloorButton != null) {
-                    preSelectedFloorButton.setEnabled(false);
-                }
+                floatingActionButtonsManager.updateFloorButtonsFAB(floorId);
             }
         });
 
@@ -465,7 +355,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         WayfindingDialog wayfindingDialog = new WayfindingDialog();
         wayfindingDialog.setArguments(args);
         wayfindingDialog.setMap(map);
-        wayfindingDialog.setDeletePath(deletePath);
+        wayfindingDialog.setDeletePath(fabDeletePath);
 
         wayfindingDialog.show(getFragmentManager(), "wayfinding");
     }
@@ -535,11 +425,6 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         }
     }
 
-
-    public void notifyUser(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         // Touching the Map will deactivate CenterOnMe if it was active
@@ -550,55 +435,80 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     }
 
     private void localisationButtonBehaviour() {
-        Log.d("ADSUM:CURENT", String.valueOf(currentNavigationMode));
-        Log.d("ADSUM:NEXT", String.valueOf(nextNavigationMode));
+
 
         //changes the color of setLocalisation the floating button and behaves accordingly
         switch (nextNavigationMode) {
             case FREE:
-
                 enableFreeMode();
                 nextNavigationMode = NAVIGATION_MODE.CENTER_ON;
+                Log.d("ADSUM:CURENT", String.valueOf(currentNavigationMode));
+                Log.d("ADSUM:NEXT", String.valueOf(nextNavigationMode));
                 break;
             case CENTER_ON:
                 currentNavigationMode = NAVIGATION_MODE.CENTER_ON;
-                setLocalisationBehaviour.setColorNormal(getResources().getColor(R.color.maj));
+                floatingActionButtonsManager.setColorLocalisationButton(getResources().getColor(R.color.maj));
                 Toast.makeText(getActivity(), "Map AutoCentered", Toast.LENGTH_SHORT).show();
                 setCurrentFloorOnUser();
                 map.centerOnPlace(0, 300, 0.2f);
                 nextNavigationMode = NAVIGATION_MODE.CENTER_ON_AND_COMPASS;
+                Log.d("ADSUM:CURENT", String.valueOf(currentNavigationMode));
+                Log.d("ADSUM:NEXT", String.valueOf(nextNavigationMode));
                 break;
             case CENTER_ON_AND_COMPASS:
                 currentNavigationMode = NAVIGATION_MODE.CENTER_ON_AND_COMPASS;
                 Toast.makeText(getActivity(), "Map AutoCentered And Compass", Toast.LENGTH_SHORT).show();
-                setLocalisationBehaviour.setIcon(R.drawable.icon_location_compass);
+                floatingActionButtonsManager.setIconLocalisationButton(R.drawable.icon_location_compass);
                 mapActions.startCompass();
                 nextNavigationMode = NAVIGATION_MODE.FREE;
+                Log.d("ADSUM:CURENT", String.valueOf(currentNavigationMode));
+                Log.d("ADSUM:NEXT", String.valueOf(nextNavigationMode));
                 break;
         }
 
         // Make the setLevel button visible
         if (map.getCurrentFloor() != -1) {
-            setLevel.setVisibility(View.VISIBLE);
-
+            floatingActionButtonsManager.setVisibilityFAButtonSetLevel(true);
         }
     }
-
-    @Override
-    public void onDialogNeutralClick(android.support.v4.app.DialogFragment dialog, int id) {
-        //Function called from Dialog to draw path
-        pathActions.drawPathToPoi(id);
-    }
-
 
     private void enableFreeMode() {
         if (currentNavigationMode != NAVIGATION_MODE.FREE) {
             mapActions.stopCompass();
-            setLocalisationBehaviour.setIcon(R.drawable.icon_location);
-            setLocalisationBehaviour.setColorNormal(getResources().getColor(R.color.white));
+            floatingActionButtonsManager.setIconLocalisationButton(R.drawable.icon_location);
+            floatingActionButtonsManager.setColorLocalisationButton(getResources().getColor(R.color.white));
             currentNavigationMode = NAVIGATION_MODE.FREE;
             nextNavigationMode = NAVIGATION_MODE.CENTER_ON;
         }
+    }
+
+    @Override
+    public void onDialogClick(android.support.v4.app.DialogFragment dialog, int id) {
+        //Function called from Dialog to draw path
+        pathActions.drawPathToPoi(id);
+    }
+
+    @Override
+    public void setSiteViewListener() {
+        doSetSiteView();
+    }
+
+    @Override
+    public void setLevelListener() {
+
+    }
+
+    @Override
+    public void deletePathListener() {
+        pathActions.resetPathDrawing();
+        map.unLightAll();
+        floatingActionButtonsManager.setVisibilityFABDeletePath(false);
+    }
+
+    @Override
+    public void setLocalisationBehaviour() {
+        localisationButtonBehaviour();
+
     }
 
     @Override

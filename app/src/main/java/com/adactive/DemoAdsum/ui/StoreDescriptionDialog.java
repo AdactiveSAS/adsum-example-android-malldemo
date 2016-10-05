@@ -23,7 +23,7 @@ public class StoreDescriptionDialog extends DialogFragment {
     // public static final String ARG_STORE_DESCRIPTION = "store_description";
 
     public interface DialogListener {
-        void onDialogNeutralClick(DialogFragment dialog, int id);
+        void onDialogClick(DialogFragment dialog, int id);
     }
 
     DialogListener mListener;
@@ -60,7 +60,7 @@ public class StoreDescriptionDialog extends DialogFragment {
             final AlertDialog.Builder builder1 = builder.setView(rootView)
                     .setPositiveButton("Show me the way", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            mListener.onDialogNeutralClick(StoreDescriptionDialog.this, PoiID);
+                            mListener.onDialogClick(StoreDescriptionDialog.this, PoiID);
                         }
                     });
 
