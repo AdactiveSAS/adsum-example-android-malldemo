@@ -64,7 +64,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
     private MapActions mapActions;
     private PathActions pathActions;
-    private FloatingActionButtonsManager floatingActionButtonsManager;
+    private FloatingActionButtonsManager fabButtonsManager;
 
     public static MapFragment newInstance(MapView map) {
         MapFragment fragment = new MapFragment();
@@ -95,7 +95,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
                 if (nBuidlingid != currentBuildingId) {
                     doBuildingClicked(nBuidlingid);
                 }
-                if (!floatingActionButtonsManager.isFloorButtonMapEmpty()) {
+                if (!fabButtonsManager.isFloorButtonMapEmpty()) {
                     doFloorButtonsChanged(floorId);
                 }
             }
@@ -143,20 +143,16 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
             @Override
             public void OnFloorIntersectedAtPositionHandler(int i, Coordinates3D coordinates3D) {
-
             }
         };
 
-
         map.addEventListener(adActiveEventListener);
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -167,7 +163,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         currentCameraMode = MapView.CameraMode.FULL;
         mapContainer = (LinearLayout) rootView.findViewById(R.id.map_container);
 
-        floatingActionButtonsManager = new FloatingActionButtonsManager(rootView);
+        fabButtonsManager = new FloatingActionButtonsManager(rootView);
 
 
         if (!map.isMapDataAvailable()) {
@@ -258,12 +254,12 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
         final boolean isInBuilding = map.getCurrentBuilding() != -1;
 
-        floatingActionButtonsManager.addEventListener(this);
+        fabButtonsManager.addEventListener(this);
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                floatingActionButtonsManager.doFABBehaviourWhetherInBuilding(isInBuilding);
+                fabButtonsManager.doFABBehaviourWhetherInBuilding(isInBuilding);
             }
         });
 
@@ -280,7 +276,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     }
 
     private void doSetSiteView() {
-        floatingActionButtonsManager.doSetSiteViewFAB();
+        fabButtonsManager.doSetSiteViewFAB();
         map.setSiteView();
     }
 
@@ -311,7 +307,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             @Override
             public void run() {
                 map.unLightAll();
-                floatingActionButtonsManager.doBuildingClickedFAB(floors,getActivity().getBaseContext(),map);
+                fabButtonsManager.doBuildingClickedFAB(floors,getActivity().getBaseContext(),map);
             }
         });
 
@@ -328,7 +324,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                floatingActionButtonsManager.updateFloorButtonsFAB(floorId);
+                fabButtonsManager.updateFloorButtonsFAB(floorId);
             }
         });
 
@@ -447,7 +443,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
                 break;
             case CENTER_ON:
                 currentNavigationMode = NAVIGATION_MODE.CENTER_ON;
-                floatingActionButtonsManager.setColorLocalisationButton(getResources().getColor(R.color.maj));
+                fabButtonsManager.setColorLocalisationButton(getResources().getColor(R.color.maj));
                 Toast.makeText(getActivity(), "Map AutoCentered", Toast.LENGTH_SHORT).show();
                 setCurrentFloorOnUser();
                 map.centerOnPlace(0, 300, 0.2f);
@@ -458,7 +454,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             case CENTER_ON_AND_COMPASS:
                 currentNavigationMode = NAVIGATION_MODE.CENTER_ON_AND_COMPASS;
                 Toast.makeText(getActivity(), "Map AutoCentered And Compass", Toast.LENGTH_SHORT).show();
-                floatingActionButtonsManager.setIconLocalisationButton(R.drawable.icon_location_compass);
+                fabButtonsManager.setIconLocalisationButton(R.drawable.icon_location_compass);
                 mapActions.startCompass();
                 nextNavigationMode = NAVIGATION_MODE.FREE;
                 Log.d("ADSUM:CURENT", String.valueOf(currentNavigationMode));
@@ -468,15 +464,15 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
         // Make the setLevel button visible
         if (map.getCurrentFloor() != -1) {
-            floatingActionButtonsManager.setVisibilityFAButtonSetLevel(true);
+            fabButtonsManager.setVisibilityFAButtonSetLevel(true);
         }
     }
 
     private void enableFreeMode() {
         if (currentNavigationMode != NAVIGATION_MODE.FREE) {
             mapActions.stopCompass();
-            floatingActionButtonsManager.setIconLocalisationButton(R.drawable.icon_location);
-            floatingActionButtonsManager.setColorLocalisationButton(getResources().getColor(R.color.white));
+            fabButtonsManager.setIconLocalisationButton(R.drawable.icon_location);
+            fabButtonsManager.setColorLocalisationButton(getResources().getColor(R.color.white));
             currentNavigationMode = NAVIGATION_MODE.FREE;
             nextNavigationMode = NAVIGATION_MODE.CENTER_ON;
         }
@@ -502,7 +498,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     public void deletePathListener() {
         pathActions.resetPathDrawing();
         map.unLightAll();
-        floatingActionButtonsManager.setVisibilityFABDeletePath(false);
+        fabButtonsManager.setVisibilityFABDeletePath(false);
     }
 
     @Override

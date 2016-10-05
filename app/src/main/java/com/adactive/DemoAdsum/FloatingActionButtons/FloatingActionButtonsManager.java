@@ -7,8 +7,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.adactive.DemoAdsum.R;
-import com.adactive.DemoAdsum.actions.MapActions;
-import com.adactive.DemoAdsum.ui.WayfindingDialog;
 import com.adactive.nativeapi.MapView;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -27,9 +25,10 @@ public class FloatingActionButtonsManager {
     private FloatingActionButton fabSetSiteView;
     private FloatingActionButton fabDeletePath;
     private FloatingActionButton fabSetLocalisationBehaviour;
-
     private FloatingActionButton preSelectedFloorButton;
+
     private Map<Integer, FloatingActionButton> floorButtonsMap = new HashMap<>();
+
     private FABListener floatingActionButtonListener;
 
     public FloatingActionButtonsManager(View aRootView) {
@@ -38,7 +37,6 @@ public class FloatingActionButtonsManager {
         fabDeletePath = (FloatingActionButton) aRootView.findViewById(R.id.delete_path);
         fabSetLocalisationBehaviour = (FloatingActionButton) aRootView.findViewById(R.id.set_follow_location);
     }
-
 
     public interface FABListener {
         void setSiteViewListener();
@@ -109,7 +107,7 @@ public class FloatingActionButtonsManager {
 
 
     public void doBuildingClickedFAB(int[] floors, Context ctx,MapView map) {
-        // Remove all the former floorButtons of the menu */
+        // Remove all the former floorButtons of the menu
         for (Integer floorId : floorButtonsMap.keySet()) {
             fabSetLevel.removeButton(floorButtonsMap.get(floorId));
         }
@@ -125,16 +123,16 @@ public class FloatingActionButtonsManager {
         }
 
         // Disable the current floor button
-        if (floorButton != null) {
             preSelectedFloorButton = floorButton;
             floorButton.setEnabled(false);
-        }
+
 
         // Change the icon of the fabSetSiteView button (into arrow)
         fabSetSiteView.setIcon(R.drawable.ic_chevron_left_black_48dp);
 
         // Make the fabSetLevel button visible
         fabSetLevel.setVisibility(View.VISIBLE);
+
     }
 
 
@@ -167,7 +165,7 @@ public class FloatingActionButtonsManager {
     }
 
     public void updateFloorButtonsFAB(final int floorId) {
-        if (preSelectedFloorButton != null && floorId > -1) {
+        if (preSelectedFloorButton != null) {
             preSelectedFloorButton.setEnabled(true);
         }
 
@@ -193,7 +191,6 @@ public class FloatingActionButtonsManager {
             fabSetLevel.setVisibility(View.VISIBLE);
         } else {
             fabSetLevel.setVisibility(View.INVISIBLE);
-            fabDeletePath.setVisibility(View.GONE);
         }
 
     }
