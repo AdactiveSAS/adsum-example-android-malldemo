@@ -126,11 +126,19 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
             @Override
             public void OnCheckForUpdatesHandler(int i) {
-                Log.i("update", "done");
+                if(i==CheckForUpdatesNotice.CHECKFORUPDATES_COMMUNICATIONERROR) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "Update Status: Communication Error", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
                 if (i == CheckForUpdatesNotice.CHECKFORUPDATES_UPDATESFOUND || i == CheckForUpdatesNotice.CHECKFORUPDATES_UPDATESNOTFOUND) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Toast.makeText(getActivity(),"Update Status: Success",Toast.LENGTH_LONG).show();
                             rootView.findViewById(R.id.map).setVisibility(View.VISIBLE);
                             rootView.findViewById(R.id.progress_container).setVisibility(View.GONE);
                             isMenuEnabled = true;
