@@ -251,11 +251,12 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     }
 
     private void doAfterMapLoaded() {
+        //do after map has finished loading
 
         final boolean isInBuilding = map.getCurrentBuilding() != -1;
 
         fabButtonsManager.addEventListener(this);
-
+        //set floating buttons
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -268,6 +269,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         }
         setCurrentFloorOnUser();
 
+        //set map initial state
         mapActions.setInitialState();
         pathActions.resetPathDrawing()
                 .setMotionFalse();
@@ -307,7 +309,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             @Override
             public void run() {
                 map.unLightAll();
-                fabButtonsManager.doBuildingClickedFAB(floors,getActivity().getBaseContext(),map);
+                fabButtonsManager.doBuildingClickedFAB(floors, getActivity().getBaseContext(), map);
             }
         });
 
@@ -431,9 +433,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     }
 
     private void localisationButtonBehaviour() {
-
-
-        //changes the color of setLocalisation the floating button and behaves accordingly
+        //changes the color and icon of the localisationButton
         switch (nextNavigationMode) {
             case FREE:
                 enableFreeMode();
@@ -469,6 +469,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     }
 
     private void enableFreeMode() {
+        //resets compass mode and centerOnMe
         if (currentNavigationMode != NAVIGATION_MODE.FREE) {
             mapActions.stopCompass();
             fabButtonsManager.setIconLocalisationButton(R.drawable.icon_location);
