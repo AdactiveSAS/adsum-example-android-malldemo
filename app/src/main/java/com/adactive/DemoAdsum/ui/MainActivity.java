@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        //drawer items
 
         int id = item.getItemId();
 
