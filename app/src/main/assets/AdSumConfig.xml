@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-
     <Adsum>
-
     <siteId>234</siteId>
-
-    <kioskId>445</kioskId>
-
+    <kioskId>162</kioskId>
     <WSURL>https://api.adsum.io/1.1</WSURL>
-
-    <APIKEY>a7b02f9311b6d43c6fe4cde53290b6f323e0a4e8f91a97ffe25b3cf2332c0fbd</APIKEY>
-
+    <APIKEY>9390754eee2214e35473c88d3aba884352287121fd1c660014411428362b5f1a</APIKEY>
     <PIWIKKEY>9b6c23ae6801b25d476eb3d6b1529a2f</PIWIKKEY>
-
     <PIWIKURL>http://analytics.adsum.io/piwik.php</PIWIKURL>
-
     <PIWIKSITEID>89</PIWIKSITEID>
-
 </Adsum>

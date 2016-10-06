@@ -18,9 +18,8 @@ public class StoreDescriptionDialog extends DialogFragment {
 
     private View rootView;
     public static final String ARG_STORE_NAME = "store_name";
+    public static final String ARG_STORE_DESCRIPTION="store_description";
     private TextView poiNametv;
-
-    // public static final String ARG_STORE_DESCRIPTION = "store_description";
 
     public interface DialogListener {
         void onDialogClick(DialogFragment dialog, int id);
@@ -53,7 +52,7 @@ public class StoreDescriptionDialog extends DialogFragment {
             TextView poiMessage = (TextView) rootView.findViewById(R.id.poiMessage);
 
             poiNametv.setText(getArguments().getString(ARG_STORE_NAME));
-            poiMessage.setText("Here will be written the description of the Place");
+            poiMessage.setText(getArguments().getString(ARG_STORE_DESCRIPTION));
 
             final Integer PoiID = getArguments().getInt("PoiID");
 

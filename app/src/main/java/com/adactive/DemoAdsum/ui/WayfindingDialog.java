@@ -78,12 +78,16 @@ public class WayfindingDialog extends DialogFragment {
                         int fromId = storesIdsList.get(lastFromIndex);
                         int toId = storesIdsList.get(lastToIndex);
 
+                        map.unLightAll();
+
                         map.highLightPOI(fromId, getString(R.string.highlight_color));
                         map.highLightPOI(toId, getString(R.string.highlight_color));
 
-                        //map.setPoiAsStartPoint(fromId);
+                        map.setPoiAsStartPoint(fromId);
+                        map.centerOnPOI(toId,450,0.8f);
+                        map.drawPathToPoi(toId);
+                        map.setPoiAsStartPoint(toId);
 
-                        map.drawPathToPoi(storesIdsList.get(lastToIndex));
 
                         deletePath.setVisibility(View.VISIBLE);
                         wfDialog.dismiss();
