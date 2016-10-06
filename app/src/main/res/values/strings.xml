@@ -29,7 +29,7 @@
 
     <string name="search_hint">Search a place</string>
 
-    <string name="highlight_color">#21B8B1</string>
+    <string name="highlight_color">#e57d22"</string>
     <string name="inactive_color">#F9F6F8</string>
 
     <string name="fake_column_name">storeName</string>

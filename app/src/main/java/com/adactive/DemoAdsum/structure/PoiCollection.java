@@ -1,6 +1,8 @@
 package com.adactive.DemoAdsum.structure;
 
+import com.adactive.nativeapi.DataObject.Collection;
 import com.adactive.nativeapi.DataObject.Poi;
+import com.adactive.nativeapi.DataObject.Store;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,30 +17,57 @@ public class PoiCollection {
 
     private List<Poi> pois = null;
 
-
+    private Map<Integer, Store> mStoreList = new HashMap();
     private Map<String, Poi> mPoiName = new HashMap<>();
     private Map<Integer, Poi> mPoiInteger = new HashMap<>();
     private List<String> mNameList = new ArrayList<String>();
     private List<Integer> mIdList = new ArrayList<Integer>();
+    private Map<String, Integer> mIdNameList = new HashMap<>();
+
+    private List<String> wfNameList = new ArrayList<>();
+    private List<Integer> wfIdList = new ArrayList<>();
+
 
     public PoiCollection(List<Poi> aPois) {
         pois = aPois;
+
         for (Poi o : pois) {
             if (o.getName() != null) {
+
+                mIdNameList.put(o.getName(), o.getId());
+
                 mPoiName.put(o.getName(), o);
                 mPoiInteger.put(o.getId(), o);
                 mNameList.add(o.getName());
-                mIdList.add(o.getId());
+
+            }
+            //select pois with a place
+            if (!o.getPlaces().isEmpty()) {
+                wfNameList.add(o.getName());
             }
         }
         sortPoiNameMap();
     }
 
     private void sortPoiNameMap() {
-            Collections.sort(mNameList, String.CASE_INSENSITIVE_ORDER);
+        Collections.sort(mNameList, String.CASE_INSENSITIVE_ORDER);
+        Collections.sort(wfNameList,String.CASE_INSENSITIVE_ORDER);
+        sortIdList();
     }
 
-    public Poi getByName(String name) {return mPoiName.get(name);
+    private void sortIdList() {
+        //id lists are sorted in the same order as the name lists
+        for (String storeName : mNameList) {
+            mIdList.add(mIdNameList.get(storeName));
+        }
+        for (String name :wfNameList){
+            wfIdList.add(mIdNameList.get(name));
+        }
+
+    }
+
+    public Poi getByName(String name) {
+        return mPoiName.get(name);
     }
 
     public Poi getById(Integer id) {
@@ -49,7 +78,21 @@ public class PoiCollection {
         return mNameList;
     }
 
-    public List<Integer> getPoiIdList() {
+    public List<Integer> getPoiIdSortedList() {
         return mIdList;
+    }
+
+    public List<String> getWfNameList(){
+        //optimised list for wayfinding, returns only pois with places
+        return wfNameList;
+    }
+
+    public List<Integer> getWfIdList(){
+        return wfIdList;
+    }
+
+    public Store getStoresbyId(Integer id) {
+        return mStoreList.get(id);
+
     }
 }

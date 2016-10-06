@@ -36,7 +36,7 @@ public class MapActions implements Compass.CompassListener {
         map.limitCameraMovement(false);
         map.setSiteVisible(false);
         map.setCameraMode(currentCameraMode);
-        map.centerOnPlace(0, 300, 0.2f);
+        map.centerOnPlace(0, 450, 0.9f);
 
         return this;
     }

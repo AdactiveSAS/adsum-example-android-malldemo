@@ -75,7 +75,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     public MapFragment() {
     }
 
-    public void setMap(MapView m) {
+    public void setMap(final MapView m) {
         map = m;
 
         adActiveEventListener = new AdActiveEventListener() {
@@ -297,7 +297,11 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
         //Launch Dialog
         Bundle args = new Bundle();
-        String name = map.getDataManager().getPoi(POI).getName();
+        String name= mPoiCollection.getById(POI).getName();
+        //DataObject dataObject=new DataObject();
+
+        //String description= mPoiCollection.getById(POI).getDescription() !=null ? mPoiCollection.getById(POI).getMetadata() : getString(R.string.no_description);
+
         args.putString(StoreDescriptionDialog.ARG_STORE_NAME, name);
         args.putInt("PoiID", POI);
         //args.putString(StoreDescriptionDialog.ARG_STORE_DESCRIPTION, description);
@@ -355,8 +359,8 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     private void showWayfindingFragment() {
         Bundle args = new Bundle();
 
-        args.putStringArrayList(WayfindingDialog.ARG_STORES_NAMES_LIST, (ArrayList<String>) mPoiCollection.getPoiNamesSortedList());
-        args.putIntegerArrayList(WayfindingDialog.ARG_STORES_IDS_LIST, (ArrayList<Integer>) mPoiCollection.getPoiIdList());
+        args.putStringArrayList(WayfindingDialog.ARG_STORES_NAMES_LIST, (ArrayList<String>) mPoiCollection.getWfNameList());
+        args.putIntegerArrayList(WayfindingDialog.ARG_STORES_IDS_LIST, (ArrayList<Integer>) mPoiCollection.getWfIdList());
 
         WayfindingDialog wayfindingDialog = new WayfindingDialog();
         wayfindingDialog.setArguments(args);
@@ -371,7 +375,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         isMenuEnabled = false;
         search.revealFromMenuItem(R.id.search, getActivity());
 
-        List<String> mPoiNamesSortedList = mPoiCollection.getPoiNamesSortedList();
+        List<String> mPoiNamesSortedList = mPoiCollection.getWfNameList();
         for (String n : mPoiNamesSortedList) {
 
             if (map.getPOIPlaces(mPoiCollection.getByName(n).getId()).length != 0) {
@@ -380,7 +384,6 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
                 search.addSearchable(option);
             }
         }
-
 
         search.setSearchListener(new SearchBox.SearchListener() {
             @Override
@@ -426,7 +429,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             int poiID = (mPoiCollection.getByName(searchTerm)).getId();
             map.unLightAll();
             map.highLightPOI(poiID, getString(R.string.highlight_color));
-            map.centerOnPOI(poiID);
+            map.centerOnPOI(poiID,800,0.4f);
             pathActions.drawPathToPoi(poiID);
         }
     }
