@@ -23,6 +23,8 @@ import com.adactive.nativeapi.AdActiveEventListener;
 import com.adactive.nativeapi.CheckForUpdatesNotice;
 import com.adactive.nativeapi.CheckStartNotice;
 import com.adactive.nativeapi.Coordinates3D;
+import com.adactive.nativeapi.DataObject.Poi;
+import com.adactive.nativeapi.DataObject.Store;
 import com.adactive.nativeapi.MapView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.quinny898.library.persistentsearch.SearchBox;
@@ -126,7 +128,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
             @Override
             public void OnCheckForUpdatesHandler(int i) {
-                if(i==CheckForUpdatesNotice.CHECKFORUPDATES_COMMUNICATIONERROR) {
+                if (i == CheckForUpdatesNotice.CHECKFORUPDATES_COMMUNICATIONERROR) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -138,7 +140,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getActivity(),"Update Status: Success",Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Update Status: Success", Toast.LENGTH_LONG).show();
                             rootView.findViewById(R.id.map).setVisibility(View.VISIBLE);
                             rootView.findViewById(R.id.progress_container).setVisibility(View.GONE);
                             isMenuEnabled = true;
@@ -297,14 +299,19 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
         //Launch Dialog
         Bundle args = new Bundle();
-        String name= mPoiCollection.getById(POI).getName();
-        //DataObject dataObject=new DataObject();
+        Poi o = mPoiCollection.getById(POI);
 
-        //String description= mPoiCollection.getById(POI).getDescription() !=null ? mPoiCollection.getById(POI).getMetadata() : getString(R.string.no_description);
+        String name = o.getName();
+
+        if (Store.class.isInstance(o)) {
+            String description = ((Store) o).getDescription() != null ? ((Store) o).getDescription() : getString(R.string.no_description);
+            String logoPath= ((Store) o).getLogoPath();
+            args.putString(StoreDescriptionDialog.ARG_STORE_DESCRIPTION, description);
+            args.putString(StoreDescriptionDialog.ARG_LOGO_PATH, logoPath);
+        }
 
         args.putString(StoreDescriptionDialog.ARG_STORE_NAME, name);
         args.putInt("PoiID", POI);
-        //args.putString(StoreDescriptionDialog.ARG_STORE_DESCRIPTION, description);
 
         StoreDescriptionDialog storeDialog = new StoreDescriptionDialog();
         storeDialog.setArguments(args);
@@ -429,7 +436,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             int poiID = (mPoiCollection.getByName(searchTerm)).getId();
             map.unLightAll();
             map.highLightPOI(poiID, getString(R.string.highlight_color));
-            map.centerOnPOI(poiID,800,0.4f);
+            map.centerOnPOI(poiID, 800, 0.4f);
             pathActions.drawPathToPoi(poiID);
         }
     }

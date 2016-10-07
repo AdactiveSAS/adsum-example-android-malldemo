@@ -4,12 +4,17 @@ package com.adactive.DemoAdsum.ui;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.adactive.DemoAdsum.R;
@@ -18,7 +23,8 @@ public class StoreDescriptionDialog extends DialogFragment {
 
     private View rootView;
     public static final String ARG_STORE_NAME = "store_name";
-    public static final String ARG_STORE_DESCRIPTION="store_description";
+    public static final String ARG_STORE_DESCRIPTION = "store_description";
+    public static final String ARG_LOGO_PATH = "logo_path";
     private TextView poiNametv;
 
     public interface DialogListener {
@@ -45,14 +51,25 @@ public class StoreDescriptionDialog extends DialogFragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        if ((getArguments().getString(ARG_STORE_NAME)) != null/* && ((getArguments().getString(ARG_STORE_DESCRIPTION))) != null*/) {
+        if ((getArguments().getString(ARG_STORE_NAME)) != null) {
             rootView = inflater.inflate(R.layout.dialog_poi_clicked, null);
 
             poiNametv = (TextView) rootView.findViewById(R.id.poiName);
-            TextView poiMessage = (TextView) rootView.findViewById(R.id.poiMessage);
+            WebView poiMessage = (WebView) rootView.findViewById(R.id.webV);
 
             poiNametv.setText(getArguments().getString(ARG_STORE_NAME));
-            poiMessage.setText(getArguments().getString(ARG_STORE_DESCRIPTION));
+
+            //this part is necessary to have the description justified
+            String text = "<html><body style='text-align:justify'>"
+                    + ((getArguments().getString(ARG_STORE_DESCRIPTION)))
+                    + "</body></html>";
+            poiMessage.loadDataWithBaseURL(null, (text), "text/html", "utf-8", null);
+
+            //loading logo
+            ImageView myImage = (ImageView) rootView.findViewById(R.id.logo_dialog);
+            Bitmap bmImg = BitmapFactory.decodeFile(getArguments().getString(ARG_LOGO_PATH));
+            myImage.setImageBitmap(bmImg);
+
 
             final Integer PoiID = getArguments().getInt("PoiID");
 

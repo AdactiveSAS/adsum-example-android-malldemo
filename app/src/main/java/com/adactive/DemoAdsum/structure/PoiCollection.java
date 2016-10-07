@@ -1,6 +1,7 @@
 package com.adactive.DemoAdsum.structure;
 
-import com.adactive.nativeapi.DataObject.Collection;
+import android.util.Log;
+
 import com.adactive.nativeapi.DataObject.Poi;
 import com.adactive.nativeapi.DataObject.Store;
 
@@ -18,11 +19,12 @@ public class PoiCollection {
     private List<Poi> pois = null;
 
     private Map<Integer, Store> mStoreList = new HashMap();
+    private Map<String, Integer> mIdNameList = new HashMap<>();
     private Map<String, Poi> mPoiName = new HashMap<>();
     private Map<Integer, Poi> mPoiInteger = new HashMap<>();
-    private List<String> mNameList = new ArrayList<String>();
-    private List<Integer> mIdList = new ArrayList<Integer>();
-    private Map<String, Integer> mIdNameList = new HashMap<>();
+
+    private List<String> mNameList = new ArrayList<>();
+    private List<Integer> mIdList = new ArrayList<>();
 
     private List<String> wfNameList = new ArrayList<>();
     private List<Integer> wfIdList = new ArrayList<>();
