@@ -4,13 +4,12 @@ package com.adactive.DemoAdsum.ui;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
@@ -18,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.adactive.DemoAdsum.R;
+
+import java.io.File;
 
 public class StoreDescriptionDialog extends DialogFragment {
 
@@ -52,24 +53,26 @@ public class StoreDescriptionDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         if ((getArguments().getString(ARG_STORE_NAME)) != null) {
-            rootView = inflater.inflate(R.layout.dialog_poi_clicked, null);
 
+            rootView = inflater.inflate(R.layout.dialog_poi_clicked, null);
             poiNametv = (TextView) rootView.findViewById(R.id.poiName);
             WebView poiMessage = (WebView) rootView.findViewById(R.id.webV);
 
+            //set name
             poiNametv.setText(getArguments().getString(ARG_STORE_NAME));
-
+            File pathFile = getContext().getFilesDir();
+            Log.d("eipnf", pathFile.getAbsolutePath());
             //this part is necessary to have the description justified
             String text = "<html><body style='text-align:justify'>"
                     + ((getArguments().getString(ARG_STORE_DESCRIPTION)))
                     + "</body></html>";
             poiMessage.loadDataWithBaseURL(null, (text), "text/html", "utf-8", null);
-
+            String path = getArguments().getString(ARG_LOGO_PATH);
             //loading logo
-            ImageView myImage = (ImageView) rootView.findViewById(R.id.logo_dialog);
-            Bitmap bmImg = BitmapFactory.decodeFile(getArguments().getString(ARG_LOGO_PATH));
-            myImage.setImageBitmap(bmImg);
+            File temp = new File(path);
 
+            ImageView myImage = (ImageView) rootView.findViewById(R.id.logo_dialog);
+            myImage.setImageURI(Uri.fromFile(temp));
 
             final Integer PoiID = getArguments().getInt("PoiID");
 
