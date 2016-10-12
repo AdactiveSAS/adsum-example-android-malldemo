@@ -436,7 +436,8 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             int poiID = (mPoiCollection.getByName(searchTerm)).getId();
             map.unLightAll();
             map.highLightPOI(poiID, getString(R.string.highlight_color));
-            map.centerOnPOI(poiID, 800, 0.4f);
+            map.centerOnPlace(0);
+            pathActions.setMotionOn();
             pathActions.drawPathToPoi(poiID);
         }
     }
