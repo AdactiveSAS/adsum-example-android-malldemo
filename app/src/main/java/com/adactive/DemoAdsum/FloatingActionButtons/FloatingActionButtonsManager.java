@@ -3,7 +3,9 @@ package com.adactive.DemoAdsum.FloatingActionButtons;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.adactive.DemoAdsum.R;
@@ -19,7 +21,7 @@ import java.util.Map;
  * Created by Ambroise on 04/10/2016.
  */
 
-public class FloatingActionButtonsManager {
+public class FloatingActionButtonsManager extends com.getbase.floatingactionbutton.FloatingActionsMenu{
 
     private FloatingActionsMenu fabSetLevel;
     private FloatingActionButton fabSetSiteView;
@@ -31,12 +33,27 @@ public class FloatingActionButtonsManager {
 
     private FABListener floatingActionButtonListener;
 
-    public FloatingActionButtonsManager(View aRootView) {
+    public FloatingActionButtonsManager(Context context, View aRootView) {
+        super(context);
         fabSetSiteView = (FloatingActionButton) aRootView.findViewById(R.id.set_site_view);
         fabSetLevel = (FloatingActionsMenu) aRootView.findViewById(R.id.set_level);
         fabDeletePath = (FloatingActionButton) aRootView.findViewById(R.id.delete_path);
         fabSetLocalisationBehaviour = (FloatingActionButton) aRootView.findViewById(R.id.set_follow_location);
     }
+
+    public FloatingActionButtonsManager(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public FloatingActionButtonsManager(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return false;
+    }
+
 
     public interface FABListener {
         void setSiteViewListener();

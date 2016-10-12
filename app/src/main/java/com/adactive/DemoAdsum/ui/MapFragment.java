@@ -173,7 +173,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         currentCameraMode = MapView.CameraMode.FULL;
         mapContainer = (LinearLayout) rootView.findViewById(R.id.map_container);
 
-        fabButtonsManager = new FloatingActionButtonsManager(rootView);
+        fabButtonsManager = new FloatingActionButtonsManager(getContext(),rootView);
 
 
         if (!map.isMapDataAvailable()) {

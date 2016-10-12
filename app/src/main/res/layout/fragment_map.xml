@@ -50,7 +50,7 @@
             fab:fab_colorPressed="@color/white_pressed"
             fab:fab_size="normal" />
 
-        <com.getbase.floatingactionbutton.FloatingActionsMenu
+        <com.adactive.DemoAdsum.FloatingActionButtons.FloatingActionButtonsManager
             android:id="@+id/set_level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
