@@ -28,4 +28,9 @@ public class PathActions {
         map.getPathObject().setPathMotion(false);
         return this;
     }
+    public PathActions setMotionOn(){
+        map.getPathObject().setPathMotion(true);
+        return this;
+    }
+
 }
