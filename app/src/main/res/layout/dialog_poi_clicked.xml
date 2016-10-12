@@ -15,7 +15,6 @@
         <ImageView
             android:layout_width="69dp"
             android:layout_height="29dp"
-            app:srcCompat="@drawable/ic_launcher"
             android:id="@+id/logo_dialog" />
 
         <TextView
@@ -32,7 +31,6 @@
         <ImageView
             android:layout_width="69dp"
             android:layout_height="29dp"
-            app:srcCompat="@drawable/ic_launcher"
             android:id="@+id/imageView3"
             android:layout_weight="0.03"
             android:visibility="invisible" />
