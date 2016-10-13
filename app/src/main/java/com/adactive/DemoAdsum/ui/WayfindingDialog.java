@@ -16,6 +16,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import com.adactive.DemoAdsum.R;
+import com.adactive.DemoAdsum.structure.PoiCollection;
+import com.adactive.nativeapi.DataObject.Poi;
 import com.adactive.nativeapi.MapView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -32,6 +34,8 @@ public class WayfindingDialog extends DialogFragment {
     private View rootView;
     private Button goButton;
 
+    private String s;
+    private Poi poi;
     private int lastFromIndex = -1;
     private int lastToIndex = -1;
 
@@ -54,12 +58,21 @@ public class WayfindingDialog extends DialogFragment {
         final AutoCompleteTextView actvFrom = (AutoCompleteTextView) rootView.findViewById(R.id.from_location);
         final AutoCompleteTextView actvTo = (AutoCompleteTextView) rootView.findViewById(R.id.to_location);
 
+
         final List<String> storesNamesList = getArguments().getStringArrayList(ARG_STORES_NAMES_LIST);
         final List<Integer> storesIdsList = getArguments().getIntegerArrayList(ARG_STORES_IDS_LIST);
+        final PoiCollection poiCollection = new PoiCollection(map.getDataManager().getAllPois());
 
-        ArrayAdapter<String> storesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,  storesNamesList);
+        ArrayAdapter<String> storesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, storesNamesList);
         actvFrom.setAdapter(storesAdapter);
         actvTo.setAdapter(storesAdapter);
+
+        if (getArguments().getInt("currentPoi", -1) != -1) {
+            poi = poiCollection.getById(getArguments().getInt("currentPoi", -1));
+            s = poi.getName();
+            actvTo.setText(s);
+            lastToIndex=storesNamesList.indexOf(s);
+        }
 
         final AlertDialog wfDialog = builder.setView(rootView)
                 .setTitle(R.string.wayfinding_title)
@@ -79,12 +92,13 @@ public class WayfindingDialog extends DialogFragment {
                         int toId = storesIdsList.get(lastToIndex);
 
                         map.unLightAll();
+                        map.getPathObject().setPathMotion(true);
 
                         map.highLightPOI(fromId, getString(R.string.highlight_color));
                         map.highLightPOI(toId, getString(R.string.highlight_color));
 
                         map.setPoiAsStartPoint(fromId);
-                        map.centerOnPOI(toId,450,0.8f);
+                        map.centerOnPOI(toId, 450, 0.8f);
                         map.drawPathToPoi(toId);
                         map.setPoiAsStartPoint(toId);
 
@@ -103,7 +117,6 @@ public class WayfindingDialog extends DialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                 lastFromIndex = storesNamesList.indexOf(s.toString());
                 if (lastFromIndex != -1) {
                     if (lastToIndex != -1 && lastFromIndex != lastToIndex) {
@@ -120,6 +133,7 @@ public class WayfindingDialog extends DialogFragment {
         });
 
         actvTo.addTextChangedListener(new TextWatcher() {
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -140,6 +154,7 @@ public class WayfindingDialog extends DialogFragment {
             @Override
             public void afterTextChanged(Editable s) {
             }
+
         });
 
         return wfDialog;
