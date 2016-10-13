@@ -4,6 +4,10 @@
 This app is an example of our Sdk integration agremented of a menu, different tools to search a POI and a tool to draw paths between POIs.
 It also uses the compass to have the map turn with the user.
 
+## Documentation
+
+Our Documentation is available at http://doc.adsum.io/index.php/adsum-android-sdk/
+
 ## Installation
 
 * Download our latest SDK from http://doc.adsum.io/index.php/adsum-android-sdk/
