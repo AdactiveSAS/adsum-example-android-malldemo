@@ -61,6 +61,7 @@ public class WayfindingDialog extends DialogFragment {
 
         final List<String> storesNamesList = getArguments().getStringArrayList(ARG_STORES_NAMES_LIST);
         final List<Integer> storesIdsList = getArguments().getIntegerArrayList(ARG_STORES_IDS_LIST);
+
         final PoiCollection poiCollection = new PoiCollection(map.getDataManager().getAllPois());
 
         ArrayAdapter<String> storesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, storesNamesList);
@@ -98,10 +99,7 @@ public class WayfindingDialog extends DialogFragment {
                         map.highLightPOI(toId, getString(R.string.highlight_color));
 
                         map.setPoiAsStartPoint(fromId);
-                        map.centerOnPOI(toId, 450, 0.8f);
                         map.drawPathToPoi(toId);
-                        map.setPoiAsStartPoint(toId);
-
 
                         deletePath.setVisibility(View.VISIBLE);
                         wfDialog.dismiss();
