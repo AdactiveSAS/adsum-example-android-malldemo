@@ -174,7 +174,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         currentCameraMode = MapView.CameraMode.FULL;
         mapContainer = (LinearLayout) rootView.findViewById(R.id.map_container);
 
-        fabButtonsManager = new FloatingActionButtonsManager(getContext(),rootView);
+        fabButtonsManager = new FloatingActionButtonsManager(getContext(), rootView);
 
 
         if (!map.isMapDataAvailable()) {
@@ -292,32 +292,45 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         map.setSiteView();
     }
 
+    int lastPoiId = -1;
+    int counter = 0;
+
 
     private void doPOIClicked(int POI, int place) {
         //Highlight POI
         _currentPoi = POI;
         mapActions.POIClicked(place);
 
-        //Launch Dialog
-        Bundle args = new Bundle();
-        Poi o = mPoiCollection.getById(POI);
+        if (lastPoiId == place)
+            counter += 1;
 
-        String name = o.getName();
+        lastPoiId=place;
 
-        if (Store.class.isInstance(o)) {
-            String description = ((Store) o).getDescription() != null ? ((Store) o).getDescription() : getString(R.string.no_description);
-            String logoPath = ((Store) o).getLogoPath();
-            args.putString(StoreDescriptionDialog.ARG_STORE_DESCRIPTION, description);
-            args.putString(StoreDescriptionDialog.ARG_LOGO_PATH, logoPath);
+        if (counter == 1) {
+            lastPoiId=-1;
+            counter=0;
+
+            //Launch Dialog
+            Bundle args = new Bundle();
+            Poi o = mPoiCollection.getById(POI);
+
+            String name = o.getName();
+
+            if (Store.class.isInstance(o)) {
+                String description = ((Store) o).getDescription() != null ? ((Store) o).getDescription() : getString(R.string.no_description);
+                String logoPath = ((Store) o).getLogoPath();
+                args.putString(StoreDescriptionDialog.ARG_STORE_DESCRIPTION, description);
+                args.putString(StoreDescriptionDialog.ARG_LOGO_PATH, logoPath);
+            }
+
+            args.putString(StoreDescriptionDialog.ARG_STORE_NAME, name);
+            args.putInt("PoiID", POI);
+
+            StoreDescriptionDialog storeDialog = new StoreDescriptionDialog();
+            storeDialog.setArguments(args);
+
+            storeDialog.show(getFragmentManager(), "storeDescription");
         }
-
-        args.putString(StoreDescriptionDialog.ARG_STORE_NAME, name);
-        args.putInt("PoiID", POI);
-
-        StoreDescriptionDialog storeDialog = new StoreDescriptionDialog();
-        storeDialog.setArguments(args);
-
-        storeDialog.show(getFragmentManager(), "storeDescription");
     }
 
 
@@ -329,7 +342,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             @Override
             public void run() {
                 map.unLightAll();
-                _currentPoi=-1;
+                _currentPoi = -1;
                 fabButtonsManager.doBuildingClickedFAB(floors, getActivity().getBaseContext(), map);
             }
         });
