@@ -54,7 +54,6 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     private LinearLayout mapContainer;
     private FloatingActionButton fabDeletePath;
 
-
     private SearchBox search;
     private boolean isMenuEnabled = true;
 
@@ -67,6 +66,8 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     private MapActions mapActions;
     private PathActions pathActions;
     private FloatingActionButtonsManager fabButtonsManager;
+
+    private int _currentPoi = -1;
 
     public static MapFragment newInstance(MapView map) {
         MapFragment fragment = new MapFragment();
@@ -225,7 +226,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
             // Show the wayfinding dialog
             if (id == R.id.wayfinding) {
-                showWayfindingFragment();
+                showWayfindingFragment(_currentPoi);
                 return true;
             }
 
@@ -262,7 +263,6 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
     private void doAfterMapLoaded() {
         //do after map has finished loading
-
         final boolean isInBuilding = map.getCurrentBuilding() != -1;
 
         fabButtonsManager.addEventListener(this);
@@ -295,6 +295,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
     private void doPOIClicked(int POI, int place) {
         //Highlight POI
+        _currentPoi = POI;
         mapActions.POIClicked(place);
 
         //Launch Dialog
@@ -305,7 +306,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
 
         if (Store.class.isInstance(o)) {
             String description = ((Store) o).getDescription() != null ? ((Store) o).getDescription() : getString(R.string.no_description);
-            String logoPath= ((Store) o).getLogoPath();
+            String logoPath = ((Store) o).getLogoPath();
             args.putString(StoreDescriptionDialog.ARG_STORE_DESCRIPTION, description);
             args.putString(StoreDescriptionDialog.ARG_LOGO_PATH, logoPath);
         }
@@ -328,6 +329,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             @Override
             public void run() {
                 map.unLightAll();
+                _currentPoi=-1;
                 fabButtonsManager.doBuildingClickedFAB(floors, getActivity().getBaseContext(), map);
             }
         });
@@ -363,8 +365,10 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
         map.setCameraMode(currentCameraMode);
     }
 
-    private void showWayfindingFragment() {
+    private void showWayfindingFragment(Integer poiId) {
         Bundle args = new Bundle();
+
+        args.putInt("currentPoi", _currentPoi);
 
         args.putStringArrayList(WayfindingDialog.ARG_STORES_NAMES_LIST, (ArrayList<String>) mPoiCollection.getWfNameList());
         args.putIntegerArrayList(WayfindingDialog.ARG_STORES_IDS_LIST, (ArrayList<Integer>) mPoiCollection.getWfIdList());
@@ -439,6 +443,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
             map.centerOnPlace(0);
             pathActions.setMotionOn();
             pathActions.drawPathToPoi(poiID);
+            _currentPoi = poiID;
         }
     }
 
@@ -517,6 +522,7 @@ public class MapFragment extends MainActivity.PlaceholderFragment implements Vie
     @Override
     public void deletePathListener() {
         pathActions.resetPathDrawing();
+        _currentPoi = -1;
         map.unLightAll();
         fabButtonsManager.setVisibilityFABDeletePath(false);
     }
