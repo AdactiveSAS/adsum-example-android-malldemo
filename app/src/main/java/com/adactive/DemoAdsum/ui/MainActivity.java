@@ -25,9 +25,6 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private MapView map;
-    private Toolbar toolbar;
-    private PathActions pathActions;
-    private MapActions mapActions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +42,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         map = new MapView(getApplicationContext());
 
-        mapActions = new MapActions(map);
+        MapActions mapActions = new MapActions(map);
         mapActions.startMap();
 
         //Drawer implementation
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -114,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.drawer_resetPath) {
             Toast.makeText(this, "Path Reset", Toast.LENGTH_LONG).show();
-            pathActions = new PathActions(map);
+            PathActions pathActions = new PathActions(map);
             pathActions.resetPathDrawing();
 
 
